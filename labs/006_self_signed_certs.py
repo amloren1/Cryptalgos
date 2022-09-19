@@ -9,27 +9,31 @@ from datetime import datetime, timedelta
 import ipaddress
 
 
-SERVER_IP = '192.168.0.93'
+SERVER_IP = "192.168.0.93"
 
-HOST_NAME = 'ca_server' # alternate
+HOST_NAME = "ca_server"  # alternate
 
 key = rsa.generate_private_key(
-    public_exponent=65537,
-    key_size=2048,
-    backend=default_backend()
+    public_exponent=65537, key_size=2048, backend=default_backend()
 )
 
 # assign common name to the certificate
 # user generic naming for now
-name = x509.Name([
-    x509.NameAttribute(NameOID.COMMON_NAME, HOST_NAME),
-])
+name = x509.Name(
+    [
+        x509.NameAttribute(NameOID.COMMON_NAME, HOST_NAME),
+    ]
+)
 
 # alternative names. Must have this for some browsers
-alt_names = [x509.DNSName(SERVER_IP), x509.DNSName(HOST_NAME), x509.IPAddress(ipaddress.ip_address(SERVER_IP))]
+alt_names = [
+    x509.DNSName(SERVER_IP),
+    x509.DNSName(HOST_NAME),
+    x509.IPAddress(ipaddress.ip_address(SERVER_IP)),
+]
 
 # create a self signed certificate
-#ca = True meaning that we are the certificate authority
+# ca = True meaning that we are the certificate authority
 basic_constraints = x509.BasicConstraints(ca=True, path_length=0)
 
 now = datetime.utcnow()
@@ -52,11 +56,11 @@ my_cert_pem = cert.public_bytes(serialization.Encoding.PEM)
 my_key_pem = key.private_bytes(
     encoding=serialization.Encoding.PEM,
     format=serialization.PrivateFormat.TraditionalOpenSSL,
-    encryption_algorithm=serialization.NoEncryption()
+    encryption_algorithm=serialization.NoEncryption(),
 )
 
-with open('test_ubuntu_new.crt', 'wb') as f:
+with open("test_ubuntu_new.crt", "wb") as f:
     f.write(my_cert_pem)
 
-with open('test_ubuntu_new.key', 'wb') as f:
+with open("test_ubuntu_new.key", "wb") as f:
     f.write(my_key_pem)
