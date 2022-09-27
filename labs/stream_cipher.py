@@ -28,6 +28,19 @@ def transmit(cipher, likely):
         b.append(c)
     return bytes(b)
     
+def get_key(message, cipher):
+    """
+    Recover key from message and cipher
+    """
+    return bytes([message[i] ^ cipher[i] for i in range(len(message))])
+
+def crack(key_stream, cipher):
+    """
+    Recover key from message and cipher
+    """
+    length = min(len(key_stream), len(cipher))
+    return bytes([key_stream[i] ^ cipher[i] for i in range(length)])
+
 def example_1():
     key = KeyStream(11)
     message = "HEY YOU".encode()
@@ -58,7 +71,7 @@ def modification(cipher):
     return bytes(mod[i] ^ cipher[i] for i in range(len(cipher)))
 
 
-def example_2():
+def example_2_authenticity_weakness():
     """
     Message authenticity issues with stream ciphers
 
@@ -78,4 +91,65 @@ def example_2():
     # decrypt
     print(encrypt(key, mod))
 
-example_2()
+
+def example_3_reuse_keys_weakness():
+    """
+    This example runs though an attack on a stream cipher to 
+    recover the key used. 
+
+    Keys can be poached if message is known by attacker. 
+    
+    """
+    # message known by attacker. 
+    attacker_message = "This is the most valued secret of all time".encode()
+    
+    # Alice sends message to Bob
+    key = KeyStream(10)
+    message = attacker_message
+    print(message)
+    cipher = encrypt(key, message)
+    print(cipher)
+
+    # attacker intercepts message and can now recover the key
+    attacker_key_stream = get_key(attacker_message, cipher)
+
+    # Alice sends another message to Bob
+    key = KeyStream(10)
+    message = "Plan to take over the world. Using robots and social engineering in that order".encode()
+    cipher = encrypt(key, message)
+    print(cipher)
+
+    # Bob decrypts the message
+    key = KeyStream(10)
+    print(encrypt(key, cipher))
+
+    # Attacker eve intercepts the new message
+    print(crack(attacker_key_stream, cipher))
+
+
+
+    return 
+
+def example_4_low_entropy_weakness():
+    """
+    The key generator can have low-entropy, exposing a weakness to
+    brute-force cracking.
+
+
+    """
+    # Alice send a message to Bob
+    secret_key = 10
+    key = KeyStream(secret_key)
+    message = "MESSAGE: This is the most valued secret of all time".encode()
+    print(message)
+    cipher = encrypt(key, message)
+    print(cipher)
+
+    # Bob decrypts the message
+    key = KeyStream(secret_key)
+    print(encrypt(key, cipher))
+
+    # This is the attacker
+    
+
+example_3_reuse_keys_weakness()
