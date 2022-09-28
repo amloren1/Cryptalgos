@@ -13,6 +13,15 @@ class KeyStream:
         return self.next
 
     def get_key_byte(self):
+        # by first taking the integer division of the LSB, 
+        # we can take the modulus of the 8 most significant bits, increasing
+        # the key space over the previous version
+
+        return (self.rand() // 2**23) % 256
+    def get_key_byte_old(self):
+        # modulus with 256 in order to get one byte
+        # will shift the original key down to 8 bit
+        # that reduces the key size significantly. not good
         return self.rand() % 256
 
 def encrypt(key, message):
@@ -40,6 +49,35 @@ def crack(key_stream, cipher):
     """
     length = min(len(key_stream), len(cipher))
     return bytes([key_stream[i] ^ cipher[i] for i in range(length)])
+
+def brute_force(plain, cipher):
+    """
+    Brute force attack on a stream cipher
+
+    Parameters
+    ----------
+    plain : bytes
+        known plaintext
+    cipher : bytes
+        ciphertext
+    """
+    # brute force all possible keys
+
+    # loop through all possible keys
+    for i in range(2**31):
+        bf_key = KeyStream(i)
+        # using test key and known plaintext, 
+        # xor plaintext with cipher byte-by-byte and compare results with 
+        # key
+        # if one byte does not match, get next key
+        for k in range(len(plain)):
+            xor_value = plain[k] ^ cipher[k]
+            if xor_value != bf_key.get_key_byte():
+                break
+        else:
+            print("Found key: ", i)
+            return i
+    return False
 
 def example_1():
     key = KeyStream(11)
@@ -138,9 +176,10 @@ def example_4_low_entropy_weakness():
 
     """
     # Alice send a message to Bob
-    secret_key = 10
+    secret_key = random.randrange(0, 2**20)
     key = KeyStream(secret_key)
     message = "MESSAGE: This is the most valued secret of all time".encode()
+    print(f"Secret Key: {secret_key}")
     print(message)
     cipher = encrypt(key, message)
     print(cipher)
@@ -150,6 +189,19 @@ def example_4_low_entropy_weakness():
     print(encrypt(key, cipher))
 
     # This is the attacker
+    # In this case, the message has a header. Therefore we know  the first few bytes of the message
+    print("\n** Attack **\n")
+    header = "MESSAGE: ".encode()
+    bf_key = brute_force(header, cipher)
+    key = KeyStream(bf_key)
+    message = encrypt(key, cipher)
     
+    print(message)
 
-example_3_reuse_keys_weakness()
+    # Key takeaway:
+    # Only a few bytes of known text are necessary to brute force a cipher to recover the key. 
+
+
+
+
+example_4_low_entropy_weakness()
