@@ -1,6 +1,6 @@
 """
 File integrity and sender verification can be done with a combination of 
-document hasing and digital signature. One common routine to achieve this:
+document hashing and digital signature. One common routine to achieve this:
 
 Sending file
 1. Hash document 
@@ -11,7 +11,7 @@ Upon file receipt
 1. Decrypt file with the recipient's PRIVATE KEY
 2. Use the sender's public key to decrypt the hash (digital signature).
     - if this step fails, the file was not sent by the sender that was expected
-3. Has the file to compare with the provided hash. If both hashes are the same, file 
+3. Hash the file to compare with the provided hash. If both hashes are the same, file 
     is the same as the one the sender intended to send. 
 
 
