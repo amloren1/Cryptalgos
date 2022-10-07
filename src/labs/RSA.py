@@ -14,14 +14,20 @@ First step is to generate the keys:
     lcm(p,q) = abs(p * q) / gcd(p,q)
     where gcd is the greatest common denominator
 
-    **lambda(n) is kept SECRET**
+    ** lambda(n) is kept SECRET **
 
 4 Select a prime number, e such that e is coprime to lambda(n)
     In other words, the greatest common denominator of e and lambda(n) is 1.
+    **e is public**
 
 4. Find the modular inverse of e:
     d*e = phi(q) * phi(p) + 1
+    or
+    d * (e % lambda(n)) = 1
 
+    d*e is congruent to 1 with respect to the modulus of lambda(n)
+
+    ** d is kept SECRET **
 Where phi is Euler's totient function. It represents the count of numbers which are 
 relatively prime (coprime) to the argument of the phi function. In other words phi(n) 
 is the number of integers from 1 <= k <= n for which the greatest common 
@@ -86,8 +92,19 @@ def get_prime(n=1000):
 
 
 def lcm(a, b):
+    """Implement Euclidean algorithm to find the lcm of a, b"""
     return a * b // math.gcd(a, b)
 
+def get_e(lambda_n):
+    while True:
+        e = get_prime(lambda_n)
+        if math.gcd(e, lambda_n) == 1:
+            return e
+
+def get_d(e, lambda_n):
+    for d in range(2, lambda_n):
+        if d * e % lambda_n == 1:
+            return d
 
 ##
 # Key generation. Done by Alice (secret) so that Bob can send message
@@ -106,4 +123,19 @@ print(f"Modulus n: {n}")
 lambda_n = lcm(p - 1, q - 1)
 print(f"lambda n: {lambda_n}")
 
-# Step 4
+# Step 4: find e
+e = get_e(lambda_n)
+print(f"Public exponent: {e}")
+
+# Step 5: find d, the modular inverse of e
+# solve d for the equation d * e = 1 (mod lambda(n))
+d = get_d(e, lambda_n)
+print(f"Secret exponent: {d}")
+
+# Completed key generation
+# Primes and lambda_n are thrown out
+print("\n")
+print(f"Public key (e,n): {e}   {n}")
+print(f"Private key (d): {d}")
+
+
