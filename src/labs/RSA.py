@@ -139,3 +139,17 @@ print(f"Public key (e,n): {e}   {n}")
 print(f"Private key (d): {d}")
 
 
+###
+# Send a message with new keys
+###
+
+# Bob encrypts message with public key
+m = 117
+c = m**e % n
+print(f"Bob sends: {c}")
+
+# Alice decrypts the message
+m = c ** d % n
+
+print(f"Alice decrypts message to {m}")
+
