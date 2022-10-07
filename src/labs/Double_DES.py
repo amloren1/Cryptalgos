@@ -23,7 +23,7 @@ key_11 = random.randrange(0, 256)
 key_1 = bytes([key_11, 0, 0, 0, 0, 0, 0, 0])
 key_21 = random.randrange(0, 256)
 key_2 = bytes([key_21, 0, 0, 0, 0, 0, 0, 0])
-iv = bytes([0]*8)
+iv = bytes([0] * 8)
 
 k1 = des(key_1, ECB, iv, pad=None, padmode=PAD_PKCS5)
 k2 = des(key_2, ECB, iv, pad=None, padmode=PAD_PKCS5)
@@ -38,23 +38,23 @@ print("Encrypted", cipher)
 message = k2.decrypt(k1.decrypt(cipher))
 print("Decrypted:", message)
 
-# Eve's attack on Double DES 
-# GOAL: find the keys 1, 2 
-# assume you have the cipher and you know at least 
+# Eve's attack on Double DES
+# GOAL: find the keys 1, 2
+# assume you have the cipher and you know at least
 # part of the message
 
 # loop through the first 256 possible keys
 # store the ciphers in a lookup dictionary
-lookup = {} # cipher: key 
+lookup = {}  # cipher: key
 
 for i in range(256):
     key = bytes([i, 0, 0, 0, 0, 0, 0, 0])
-    k= des(key, ECB, iv, pad=None, padmode=PAD_PKCS5)
+    k = des(key, ECB, iv, pad=None, padmode=PAD_PKCS5)
     lookup[k.encrypt(message)] = i
 
 for i in range(256):
     key = bytes([i, 0, 0, 0, 0, 0, 0, 0])
-    k= des(key, ECB, iv, pad=None, padmode=PAD_PKCS5)
+    k = des(key, ECB, iv, pad=None, padmode=PAD_PKCS5)
     if k.decrypt(cipher) in lookup:
         print("Key 11:", i)
         print("Key 21:", lookup[k.decrypt(cipher)])

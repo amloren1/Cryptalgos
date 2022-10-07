@@ -68,22 +68,26 @@ Example, find the lambda of 5
 import math
 import random
 
+
 def is_prime(p):
 
-    for i in range(2, math.isqrt(p) +1):
+    for i in range(2, math.isqrt(p) + 1):
         if p % i == 0:
             return False
     return True
 
-def get_prime(n = 1000):
+
+def get_prime(n=1000):
 
     while True:
-        p = random.randrange(n , n*2)
+        p = random.randrange(n, n * 2)
         if is_prime(p):
             return p
 
+
 def lcm(a, b):
-    return a * b// math.gcd(a,b)
+    return a * b // math.gcd(a, b)
+
 
 ##
 # Key generation. Done by Alice (secret) so that Bob can send message
@@ -95,11 +99,11 @@ q = get_prime(size)
 print(f"Generate primes: {p}\t{q}")
 
 # Step 2: compute modulus n = p * q
-n = p*q
+n = p * q
 print(f"Modulus n: {n}")
 
 # Step 3: Compute lambda(n), the least common multiple of lambda(p) and lambda(q)
-lambda_n = lcm(p-1, q-1)
+lambda_n = lcm(p - 1, q - 1)
 print(f"lambda n: {lambda_n}")
 
 # Step 4

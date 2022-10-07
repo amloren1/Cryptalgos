@@ -1,12 +1,13 @@
 import random
 
+
 def xor(x, s):
     print(f"{bin(x)} xor {bin(s)} = {bin(x ^ s)}")
 
 
-
 def generate_key_stream(n):
     return bytes([random.randrange(0, 255) for _ in range(n)])
+
 
 def xor_bytes(key_stream, message):
     print(len(key_stream))

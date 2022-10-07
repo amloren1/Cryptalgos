@@ -24,7 +24,6 @@ def encrypt(key, message):
     return cipher
 
 
-
 def get_decryption_key(key: dict):
     dkey = {}
 
