@@ -10,7 +10,15 @@ First step is to generate the keys:
             lambda(n) 
             = lcm(lambda(p), lambda(q)) 
             = lcm((p-1), q-1))
-3 Select a prime number, e such that e is not a factor of n
+    The least common multiple of p,q may be calculated using the Euclidean algorithm:
+    lcm(p,q) = abs(p * q) / gcd(p,q)
+    where gcd is the greatest common denominator
+
+    **lambda(n) is kept SECRET**
+
+4 Select a prime number, e such that e is coprime to lambda(n)
+    In other words, the greatest common denominator of e and lambda(n) is 1.
+
 4. Find the modular inverse of e:
     d*e = phi(q) * phi(p) + 1
 
@@ -74,6 +82,9 @@ def get_prime(n = 1000):
         if is_prime(p):
             return p
 
+def lcm(a, b):
+    return a * b// math.gcd(a,b)
+
 ##
 # Key generation. Done by Alice (secret) so that Bob can send message
 ##
@@ -88,4 +99,7 @@ n = p*q
 print(f"Modulus n: {n}")
 
 # Step 3: Compute lambda(n), the least common multiple of lambda(p) and lambda(q)
+lambda_n = lcm(p-1, q-1)
+print(f"lambda n: {lambda_n}")
 
+# Step 4
